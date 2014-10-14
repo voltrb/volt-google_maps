@@ -80,6 +80,7 @@ module GoogleMaps
       `google.maps.event.addListener(self.map, 'zoom_changed', function() {
           var zoomLevel = self.map.getZoom();`
 
+          @changing_zoom = true
           new_zoom = Native(`zoomLevel`)
           if attrs.zoom != new_zoom && attrs.respond_to?(:zoom=)
             attrs.zoom = new_zoom
@@ -87,24 +88,29 @@ module GoogleMaps
 
           # Setup listener again
           set_zoom
+
+          @changing_zoom = false
+
       `});`
 
     end
 
     def set_zoom
       -> do
-        level = attrs.zoom
-        if level.blank?
-          level = 8
-        else
-          level = (level || 8).to_i
-        end
+        attrs.zoom
+        unless @changing_zoom
+          level = attrs.zoom
+          if level.blank?
+            level = 8
+          else
+            level = (level || 8).to_i
+          end
 
-        puts "SET LEVEL: #{level.inspect}"
-        level_n = level.to_n
-        `if (self.map.getZoom() != level_n) {`
-          `self.map.setZoom(level_n);`
-        `}`
+          level_n = level.to_n
+          `if (self.map.getZoom() != level_n) {`
+            `self.map.setZoom(level_n);`
+          `}`
+        end
       end.watch!
     end
 
