@@ -92,26 +92,19 @@ module GoogleMaps
     end
 
     def set_zoom
-      @first_zoom = true
       -> do
-        if @first_zoom
-          @first_zoom = false
-
-          # Track
-          attrs.zoom
+        level = attrs.zoom
+        if level.blank?
+          level = 8
         else
-          level = attrs.zoom
-          if level.blank?
-            level = 8
-          else
-            level = (level || 8).to_i
-          end
-
-          level_n = level.to_n
-          `if (self.map.getZoom() != level_n) {`
-            `self.map.setZoom(level_n);`
-          `}`
+          level = (level || 8).to_i
         end
+
+        puts "SET LEVEL: #{level.inspect}"
+        level_n = level.to_n
+        `if (self.map.getZoom() != level_n) {`
+          `self.map.setZoom(level_n);`
+        `}`
       end.watch!
     end
 
