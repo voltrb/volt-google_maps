@@ -9,9 +9,8 @@ Gem::Specification.new do |spec|
   spec.name          = "volt-google-maps"
   spec.version       = version
   spec.authors       = ["Ryan Stout"]
-  spec.email         = ["ryanstout@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.email         = ["ryan@agileproductions.com"]
+  spec.summary       = %q{A google maps component for Volt}
   spec.homepage      = ""
   spec.license       = "MIT"
 
