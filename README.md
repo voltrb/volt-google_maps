@@ -1,5 +1,7 @@
 # Google Maps Volt Component
 
+(still a work in progress)
+
 Provides a simple google maps integration.
 
 First signup for a google maps api key here:
