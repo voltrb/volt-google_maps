@@ -52,20 +52,25 @@ module GoogleMaps
           end
         end
 
-        @add_listener = markers.on('added') do |index|
-          marker = markers[index]
+        @add_listener.remove if @add_listener
+        @remove_listener.remove if @remove_listener
 
-          puts "ADD MARKER AT: #{index}"
-          add_marker(marker) do |result|
-            @markers[index] = result
+        if markers.respond_to?(:on)
+          @add_listener = markers.on('added') do |index|
+            marker = markers[index]
+
+            puts "ADD MARKER AT: #{index}"
+            add_marker(marker) do |result|
+              @markers[index] = result
+            end
           end
-        end
 
-        @remove_listener = markers.on('removed') do |index|
-          puts "DELETE AT INDEX: #{index}"
-          marker = @markers.delete_at(index)
-          `console.log('marker: ', marker);`
-          remove_marker(marker.to_n)
+          @remove_listener = markers.on('removed') do |index|
+            puts "DELETE AT INDEX: #{index}"
+            marker = @markers.delete_at(index)
+            `console.log('marker: ', marker);`
+            remove_marker(marker.to_n)
+          end
         end
 
       end.watch!
