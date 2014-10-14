@@ -20,15 +20,6 @@ module GoogleMaps
       else
         setup_map(node, {lat: -34.397, lng: 150.644}.to_n)
       end
-
-      if attrs.respond_to?(:zoom)
-        set_zoom
-      end
-
-      if attrs.respond_to?(:markers)
-        set_markers
-      end
-
     end
 
 
@@ -77,6 +68,7 @@ module GoogleMaps
     end
 
     def setup_zoom
+      puts "SETUP ZOOM"
       `google.maps.event.addListener(self.map, 'zoom_changed', function() {
           var zoomLevel = self.map.getZoom();`
 
@@ -98,6 +90,7 @@ module GoogleMaps
     def set_zoom
       -> do
         attrs.zoom
+        puts "SET ZOOM"
         unless @changing_zoom
           level = attrs.zoom
           if level.blank?
@@ -121,6 +114,7 @@ module GoogleMaps
           zoom: 8
         };
         this.map = new google.maps.Map($(node).find('.google-map-instance').get(0), mapOptions);
+        console.log('map setup');
       }
 
       if attrs.respond_to?(:center)
@@ -128,7 +122,12 @@ module GoogleMaps
         -> { set_center(attrs.center) }.watch!
       end
 
-      setup_zoom if attrs.respond_to?(:zoom)
+
+      set_zoom if attrs.respond_to?(:zoom)
+
+      set_markers if attrs.respond_to?(:markers)
+
+      setup_zoom if attrs.respond_to?(:zoom=)
     end
 
     def set_center(address)
