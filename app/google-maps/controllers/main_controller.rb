@@ -81,7 +81,7 @@ module GoogleMaps
           var zoomLevel = self.map.getZoom();`
 
           new_zoom = Native(`zoomLevel`)
-          if attrs.zoom != new_zoom
+          if attrs.zoom != new_zoom && attrs.respond_to?(:zoom=)
             attrs.zoom = new_zoom
           end
 
