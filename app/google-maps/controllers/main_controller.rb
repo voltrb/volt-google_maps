@@ -3,7 +3,7 @@ if RUBY_PLATFORM == 'opal'
 end
 
 module GoogleMaps
-  class MainController < ModelController
+  class MainController < Volt::ModelController
     attr_accessor :section
 
     def index_ready
