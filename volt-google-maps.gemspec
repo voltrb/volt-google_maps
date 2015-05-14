@@ -6,7 +6,7 @@ version = File.read(File.expand_path('../VERSION', __FILE__)).strip
 
 
 Gem::Specification.new do |spec|
-  spec.name          = "volt-google-maps"
+  spec.name          = "volt-google_maps"
   spec.version       = version
   spec.authors       = ["Ryan Stout"]
   spec.email         = ["ryan@agileproductions.com"]
@@ -19,6 +19,6 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "volt", "~> 0.8.0"
+  spec.add_development_dependency "volt", "~> 0.9.2"
   spec.add_development_dependency "rake"
 end

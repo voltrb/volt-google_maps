@@ -23,7 +23,7 @@ module GoogleMaps
     end
 
 
-    def index_removed
+    def before_index_remove
       %x{
         delete this.map;
         delete this.geocoder;
@@ -50,16 +50,13 @@ module GoogleMaps
           @add_listener = markers.on('added') do |index|
             marker = markers[index]
 
-            puts "ADD MARKER AT: #{index}"
             add_marker(marker) do |result|
               @markers[index] = result
             end
           end
 
           @remove_listener = markers.on('removed') do |index|
-            puts "DELETE AT INDEX: #{index}"
             marker = @markers.delete_at(index)
-            `console.log('marker: ', marker);`
             remove_marker(marker.to_n)
           end
         end
