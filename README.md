@@ -12,6 +12,8 @@ Next put it in your config/app.rb file:
 
     config.public.google_maps_api_key = '....'
 
+Go to https://developers.google.com/maps/documentation/javascript/get-api-key to get a key.
+
 Add this line to your application's Gemfile:
 
     gem 'volt-google_maps'

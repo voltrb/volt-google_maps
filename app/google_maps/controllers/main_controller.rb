@@ -35,6 +35,14 @@ module GoogleMaps
 
     def set_markers
       -> do
+        # clear existing markers on full re-render
+        if @markers
+          @markers.each do |marker|
+            remove_marker(marker.to_n)
+          end
+        end
+        @markers = []
+
         markers = attrs.markers
 
         markers.each do |marker|
@@ -65,7 +73,6 @@ module GoogleMaps
     end
 
     def setup_zoom
-      puts "SETUP ZOOM"
       `google.maps.event.addListener(self.map, 'zoom_changed', function() {
           var zoomLevel = self.map.getZoom();`
 
@@ -87,7 +94,6 @@ module GoogleMaps
     def set_zoom
       -> do
         attrs.zoom
-        puts "SET ZOOM"
         unless @changing_zoom
           level = attrs.zoom
           if level.blank?
@@ -111,6 +117,9 @@ module GoogleMaps
           zoom: 8
         };
         this.map = new google.maps.Map($(node).find('.google-map-instance').get(0), mapOptions);
+        this.map.addListener('click', function(e) {
+          self.$trigger('click', e.latLng.lat(), e.latLng.lng());
+        });
         console.log('map setup');
       }
 
@@ -160,8 +169,8 @@ module GoogleMaps
         address = marker_data
         content = marker_data
       else
-        address = marker_data._address.or('').to_n
-        content = marker_data._content.or(address).or('').to_n
+        address = (marker_data._address || '').to_n
+        content = (marker_data._content || address || '').to_n
       end
 
       geocode(address) do |latlng|
