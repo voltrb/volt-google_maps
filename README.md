@@ -1,5 +1,7 @@
 # Google Maps Volt Component
 
+**Note**: I haven't had time to update this gem to work with the latest Volt, so it may not work iwth the latest volt, sorry. - @ryanstout
+
 (still a work in progress)
 
 Provides a simple google maps integration.
