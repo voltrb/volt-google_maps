@@ -52,33 +52,42 @@ module GoogleMaps
 
         markers = attrs.markers
 
-        markers.then do |markers|
-          markers.each do |marker|
-            add_marker(marker) do |result|
-              @markers << result
-            end
+        if markers.is_a?(Promise)
+          markers.then do |markers|
+            track_markers(markers)
           end
-
-          @add_listener.remove if @add_listener
-          @remove_listener.remove if @remove_listener
-
-          if markers.respond_to?(:on)
-            @add_listener = markers.on('added') do |index|
-              marker = markers[index]
-
-              add_marker(marker) do |result|
-                @markers[index] = result
-              end
-            end
-
-            @remove_listener = markers.on('removed') do |index|
-              marker = @markers.delete_at(index)
-              remove_marker(marker.to_n)
-            end
-          end
+        else
+          track_markers(markers)
         end
 
       end.watch!
+    end
+
+    def track_markers(markers)
+      markers.each do |marker|
+        add_marker(marker) do |result|
+          @markers << result
+        end
+      end
+
+      @add_listener.remove if @add_listener
+      @remove_listener.remove if @remove_listener
+
+      if markers.respond_to?(:on)
+        @add_listener = markers.on('added') do |index|
+          marker = markers[index]
+
+          add_marker(marker) do |result|
+            @markers[index] = result
+          end
+        end
+
+        @remove_listener = markers.on('removed') do |index|
+          marker = @markers.delete_at(index)
+          remove_marker(marker.to_n)
+        end
+      end
+
     end
 
     def setup_zoom
@@ -162,6 +171,9 @@ module GoogleMaps
         yield({lat: -34.397, lng: 150.644})
         return
       end
+
+      # needed for some reason, sometimes strings come in weird
+      `address = address + "";`
 
       `this.geocoder.geocode( { 'address': address}, function(results, status) {`
         `if (status == google.maps.GeocoderStatus.OK) {`
