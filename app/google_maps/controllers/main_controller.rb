@@ -120,7 +120,6 @@ module GoogleMaps
         this.map.addListener('click', function(e) {
           self.$trigger('click', e.latLng.lat(), e.latLng.lng());
         });
-        console.log('map setup');
       }
 
       if attrs.respond_to?(:center)
