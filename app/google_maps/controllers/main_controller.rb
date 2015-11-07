@@ -14,9 +14,15 @@ module GoogleMaps
       node = section.container_node
 
       if attrs.respond_to?(:center)
-        geocode(attrs.center) do |latlng|
-          setup_map(node, latlng.to_n)
-        end
+        @center_watch = proc do
+          attrs.center.then do |center|
+            if center
+              geocode(center) do |latlng|
+                setup_map(node, latlng.to_n)
+              end
+            end
+          end
+        end.watch!
       else
         setup_map(node, {lat: -34.397, lng: 150.644}.to_n)
       end
@@ -24,6 +30,7 @@ module GoogleMaps
 
 
     def before_index_remove
+      @center_watch.stop if @center_watch
       %x{
         delete this.map;
         delete this.geocoder;
@@ -45,27 +52,29 @@ module GoogleMaps
 
         markers = attrs.markers
 
-        markers.each do |marker|
-          add_marker(marker) do |result|
-            @markers << result
-          end
-        end
-
-        @add_listener.remove if @add_listener
-        @remove_listener.remove if @remove_listener
-
-        if markers.respond_to?(:on)
-          @add_listener = markers.on('added') do |index|
-            marker = markers[index]
-
+        markers.then do |markers|
+          markers.each do |marker|
             add_marker(marker) do |result|
-              @markers[index] = result
+              @markers << result
             end
           end
 
-          @remove_listener = markers.on('removed') do |index|
-            marker = @markers.delete_at(index)
-            remove_marker(marker.to_n)
+          @add_listener.remove if @add_listener
+          @remove_listener.remove if @remove_listener
+
+          if markers.respond_to?(:on)
+            @add_listener = markers.on('added') do |index|
+              marker = markers[index]
+
+              add_marker(marker) do |result|
+                @markers[index] = result
+              end
+            end
+
+            @remove_listener = markers.on('removed') do |index|
+              marker = @markers.delete_at(index)
+              remove_marker(marker.to_n)
+            end
           end
         end
 
@@ -141,7 +150,9 @@ module GoogleMaps
       else
         geocode(address) do |latlng|
           latlng_n = latlng.to_n
-          `self.map.setCenter(latlng_n);`
+          if (`!!self.map`)
+            `self.map.setCenter(latlng_n);`
+          end
         end
       end
     end
